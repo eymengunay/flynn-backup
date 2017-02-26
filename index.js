@@ -3,8 +3,7 @@
 const request = require('request')
 const url = require('url')
 const AWS = require('aws-sdk')
-const fs = require('fs')
-const tmp = require('tmp')
+const stream = require('stream')
 const moment = require('moment')
 
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = 0
@@ -62,21 +61,17 @@ class Backup {
           err.status = res.statusCode
           return reject(err)
         }
-        // set filename
-        console.info('Downloading backup')
         // pipe response to file
-        let tmpfile = tmp.tmpNameSync()
-        let wstream = fs.createWriteStream(tmpfile)
-        wstream.on('finish', () => {
+        console.info('Downloading backup')
+        res.pipe((() => {
+          let pass = new stream.PassThrough()
           let timestamp = start.format('YYYY-MM-DD')
           let domain = this.config.domain.replace(/\./g, '-')
           this.s3.upload({
             Key: `flynn/daily/${domain}-${timestamp}.tar`,
-            Body: fs.createReadStream(tmpfile),
+            Body: pass,
             ACL: 'private'
           }, function (err, data) {
-            // remove tmp file
-            fs.unlinkSync(tmpfile)
             // error handler
             if (err) {
               return reject(err)
@@ -85,9 +80,8 @@ class Backup {
               return resolve()
             }
           })
-        })
-        wstream.on('error', reject)
-        res.pipe(wstream)
+          return pass
+        })())
       })
     })
   }
