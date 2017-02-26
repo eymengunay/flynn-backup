@@ -1,0 +1,21 @@
+#!/usr/bin/env node
+
+'use strict'
+
+const Backup = require('../')
+const later = require('later')
+
+later.date.UTC()
+
+const backup = new Backup()
+
+let sched = later.parse.text('every 1 hour')
+let check = () => {
+  backup.start().then((file) => {
+    later.setTimeout(check, sched)
+  }).catch((err) => {
+    console.error(err)
+    later.setTimeout(check, sched)
+  })
+}
+setImmediate(check)
