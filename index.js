@@ -74,6 +74,7 @@ class Backup {
           }, function (err, data) {
             // error handler
             if (err) {
+              console.error(err)
               return reject(err)
             } else {
               console.info('Download finished')
