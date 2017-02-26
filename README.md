@@ -9,7 +9,9 @@ Automated Flynn cluster backups using Amazon S3.
   + [On Flynn using cli](#installing-on-flynn-using-cli)
   + [On Heroku](#installing-on-heroku)
   + [Locally](#installing-locally)
-- [Configuration reference](#configuration-reference)
+- [Environment variables reference](#environment-variables-reference)
+- [S3 configuration](#s3-configuration)
+  + [Example lifecycle rule](#example-lifecycle-rule)
 - [Reporting an issue or a feature request](#reporting-an-issue-or-a-feature-request)
 
 ## Installation
@@ -83,7 +85,7 @@ npm start
 *Not tested on Windows*
 
 
-## Configuration reference
+## Environment variables reference
 
 Flynn backup stores configuration in environment variables.
 
@@ -99,6 +101,34 @@ Learn more:
 
 * [Flynn - How can I pass configuration to my app?](https://flynn.io/docs/faq/how-can-i-pass-configuration-to-my-app)
 * [Heroku - Configuration and Config Vars](https://devcenter.heroku.com/articles/config-vars)
+
+## S3 configuration
+
+Make sure that versioning is enabled on your bucket.
+
+### Example lifecycle rule
+
+To automatically rotate backup files create a new lifecycle rule on your bucket:
+
+#### Name and scope
+
+Add filter to limit scope to prefix/tags:
+
+prefix flynn/daily
+
+#### Transitions
+
+None.
+
+#### Configure expiration
+
+Current versions: **checked**
+Previous versions: **checked**
+
+Expire current version of object after **30** days from object creation
+Permanently delete previous versions after **1** days from becoming a previous version
+
+Clean up incomplete multipart uploads: **checked**
 
 ## Reporting an issue or a feature request
 
