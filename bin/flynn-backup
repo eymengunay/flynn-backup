@@ -18,4 +18,4 @@ let check = () => {
     later.setTimeout(check, sched)
   })
 }
-setImmediate(check)
+later.setTimeout(check, sched)
