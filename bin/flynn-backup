@@ -8,14 +8,19 @@ const later = require('later')
 later.date.UTC()
 
 const backup = new Backup()
-
-let sched = later.parse.text('every 1 hour')
-let check = () => {
-  backup.start().then((file) => {
-    later.setTimeout(check, sched)
-  }).catch((err) => {
-    console.error(err)
-    later.setTimeout(check, sched)
-  })
+const cron = '0 */3 * * *'
+const sched = later.parse.cron(cron)
+const check = () => {
+  let next = later.schedule(sched).next(1)
+  console.log('Next backup is scheduled to start on %s', next.toISOString())
+  later.setTimeout(() => {
+    backup.start().then(() => {
+      setImmediate(check)
+    }).catch((err) => {
+      console.error(err)
+      setImmediate(check)
+    })
+  }, sched)
 }
-later.setTimeout(check, sched)
+setImmediate(check)
+console.log('Backup schedule cron string %s', cron)

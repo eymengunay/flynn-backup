@@ -40,10 +40,8 @@ class Backup {
         Bucket: this.config.s3.bucket
       }
     })
-    // schedules map
-    this.schedules = {}
   }
-  start (prefix, format) {
+  start () {
     let start = moment.utc()
     return new Promise((resolve, reject) => {
       let authStr = new Buffer(`:${this.config.auth}`).toString('base64')
@@ -85,7 +83,7 @@ class Backup {
               return resolve()
             }
           }).on('httpUploadProgress', (p) => {
-            console.log('Uploaded %sMB', (p.loaded / 1000000).toFixed(2))
+            console.log('Loaded %sMB', (p.loaded / 1000000).toFixed(2))
           })
           return pass
         })())
