@@ -62,7 +62,7 @@ class Backup {
           return reject(err)
         }
         // pipe response to file
-        console.info('Downloading backup')
+        console.info('Processing backup file')
         res.pipe((() => {
           let pass = new stream.PassThrough()
           let timestamp = start.format('YYYY-MM-DD')
@@ -77,9 +77,11 @@ class Backup {
               console.error(err)
               return reject(err)
             } else {
-              console.info('Download finished')
+              console.info('Backup uploaded successfully')
               return resolve()
             }
+          }).on('httpUploadProgress', (p) => {
+            console.log('Uploaded %sMB', (p.loaded / 1000000).toFixed(2))
           })
           return pass
         })())
