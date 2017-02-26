@@ -1,5 +1,6 @@
 # Flynn Backup
-[![Deploy](https://www.herokucdn.com/deploy/button.png)](https://heroku.com/deploy?template=https://github.com/eymengunay/flynn-backup)
+
+[![Standard - JavaScript Style Guide](https://cdn.rawgit.com/feross/standard/master/badge.svg)](https://github.com/feross/standard)
 
 Automated Flynn cluster backups using Amazon S3.
 
