@@ -3,10 +3,14 @@
 const request = require('request')
 const url = require('url')
 const AWS = require('aws-sdk')
+const path = require('path')
 const stream = require('stream')
 const moment = require('moment')
 
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = 0
+
+// load dotenv file
+require('dotenv').config({ path: path.resolve(__dirname, '.env') })
 
 class Backup {
   constructor () {
