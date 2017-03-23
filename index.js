@@ -69,18 +69,43 @@ class Backup {
           let pass = new stream.PassThrough()
           let timestamp = start.format('YYYY-MM-DD')
           let domain = this.config.domain.replace(/\./g, '-')
+          let key = `flynn/${domain}-${timestamp}.tar`
           this.s3.upload({
-            Key: `flynn/daily/${domain}-${timestamp}.tar`,
+            Key: key,
             Body: pass,
             ACL: 'private'
-          }, function (err, data) {
+          }, (err, data) => {
             // error handler
             if (err) {
               console.error(err)
               return reject(err)
             } else {
+              // put object tagging
               console.info('Backup uploaded successfully')
-              return resolve()
+              this.s3.putObjectTagging({
+                Key: key,
+                Tagging: {
+                  TagSet: [{
+                    Key: 'FIRST_OF_WEEK',
+                    Value: start.format('E') === '1' ? 'TRUE' : 'FALSE'
+                  }, {
+                    Key: 'DAY_OF_WEEK',
+                    Value: start.format('E')
+                  }, {
+                    Key: 'FIRST_OF_MONTH',
+                    Value: start.format('D') === '1' ? 'TRUE' : 'FALSE'
+                  }, {
+                    Key: 'DAY_OF_MONTH',
+                    Value: start.format('D')
+                  }]
+                }
+              }, (err, data) => {
+                // error handler
+                if (err) return reject(err)
+                // move on
+                console.info('Backup object tags added successfully')
+                return resolve()
+              })
             }
           }).on('httpUploadProgress', (p) => {
             console.log('Loaded %sMB', (p.loaded / 1000000).toFixed(2))

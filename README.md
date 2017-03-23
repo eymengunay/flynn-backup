@@ -106,6 +106,15 @@ Learn more:
 
 Make sure that versioning is enabled on your bucket.
 
+### Object tags
+
+| Key                  | Value         |
+|----------------------|---------------|
+| FIRST_OF_WEEK        | TRUE or FALSE |
+| DAY_OF_WEEK          | 1-7           |
+| FIRST_OF_MONTH       | 1-31          |
+| DAY_OF_MONTH         | TRUE or FALSE |
+
 ### Example lifecycle rule
 
 To automatically rotate backup files create a new lifecycle rule on your bucket:
@@ -114,7 +123,7 @@ To automatically rotate backup files create a new lifecycle rule on your bucket:
 
 Add filter to limit scope to prefix/tags:
 
-prefix flynn/daily
+prefix flynn
 
 #### Transitions
 
